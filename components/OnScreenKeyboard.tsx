@@ -10,10 +10,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 
 type OnScreenKeyboardProps = {
-  onKeyPressed: (key: String) => void;
-  greenLetters: String[];
-  yellowLetters: String[];
-  grayLetters: String[];
+  onKeyPressed: (key: string) => void;
+  greenLetters: string[];
+  yellowLetters: string[];
+  grayLetters: string[];
 };
 
 export const ENTER = "ENTER";

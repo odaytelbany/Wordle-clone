@@ -72,11 +72,11 @@ const Page = () => {
       // To show error
       return;
     }
-    if (!allWords.includes(currentWord)) {
-      console.log("Its not a word");
-      // to show error
-      return;
-    }
+    // if (!allWords.includes(currentWord)) {
+    //   console.log("Its not a word");
+    //   // to show error
+    //   return;
+    // }
 
     const newGreen: string[] = [];
     const newYellow: string[] = [];
@@ -100,9 +100,11 @@ const Page = () => {
       if (currentWord === word){
         console.log("Word found!");
         //Show end game screen
+        router.push(`/end?win=true&word=${word}&gameField=${JSON.stringify(rows)}`);
       }else if (curRow + 1 >= rows.length){
         console.log("Game Over !");
         //Show end game screen
+        router.push(`/end?win=false&word=${word}&gameField=${JSON.stringify(rows)}`);
       }
     }, 1500)
     setCurRow(curRow + 1);

@@ -69,27 +69,50 @@ export default function RootLayout() {
                   name="login"
                   options={{
                     presentation: "modal",
+                    title: '',
                     headerShadowVisible: false,
-                    headerTitle: () => <Logo width={150} height={40} />,
-                    headerLeft: () => (
-                      <TouchableOpacity onPress={() => router.back()}>
-                        <Ionicons
-                          name="close"
-                          size={26}
-                          color={Colors.light.gray}
-                        />
-                      </TouchableOpacity>
-                    ),
+                    headerBackVisible: false,
+                    // headerTitle: () => <Logo width={150} height={40} />,
+                    // headerRight: () => (
+                    //   <TouchableOpacity onPress={() => router.back()}>
+                    //     <Ionicons
+                    //       name="close"
+                    //       size={26}
+                    //       color={Colors.light.gray}
+                    //     />
+                    //   </TouchableOpacity>
+                    // ),
                   }}
                 />
-                <Stack.Screen name="game" options={{ 
-                  headerBackTitle: "Wordle",
-                  title: '',
-                  // headerLe
-                  headerLeft: () => <Text style={{fontSize: 26, fontFamily: 'FrankRuhlLibre_800ExtraBold'}}>Wordle</Text>,
-                  headerTintColor: colorScheme === 'dark' ? '#fff' : '#000',
-                  headerBackVisible: true,
-                 }} />
+                <Stack.Screen
+                  name="game"
+                  options={{
+                    headerBackTitle: "Wordle",
+                    title: "",
+                    // headerLe
+                    headerLeft: () => (
+                      <Text
+                        style={{
+                          fontSize: 26,
+                          fontFamily: "FrankRuhlLibre_800ExtraBold",
+                        }}
+                      >
+                        Wordle
+                      </Text>
+                    ),
+                    headerTintColor: colorScheme === "dark" ? "#fff" : "#000",
+                    headerBackVisible: true,
+                  }}
+                />
+                <Stack.Screen
+                  name="end"
+                  options={{
+                    presentation: 'fullScreenModal',
+                    title: '',
+                    headerShadowVisible: false,
+                    headerBackVisible: false,
+                  }}
+                />
               </Stack>
             </BottomSheetModalProvider>
           </GestureHandlerRootView>

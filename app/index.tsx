@@ -13,6 +13,9 @@ import SubscribeModal from "@/components/SubscribeModal";
 import { useRef } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-expo";
+import Animated, { FadeInDown, FadeInLeft } from "react-native-reanimated";
+
+const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 export default function Index() {
   const { signOut } = useAuth();
@@ -27,13 +30,13 @@ export default function Index() {
     <View style={[styles.container, { backgroundColor }]}>
       <SubscribeModal ref={subscribeModalRef} />
 
-      <View style={styles.header}>
+      <Animated.View style={styles.header} entering={FadeInDown}>
         <Icon width={100} height={100} />
         <ThemedText style={styles.title}>Wordle</ThemedText>
         <ThemedText style={styles.text}>
           Get 6 chances to guess a 5-letters word.
         </ThemedText>
-      </View>
+      </Animated.View>
 
       <View style={styles.menu}>
         <Link
@@ -44,9 +47,9 @@ export default function Index() {
           ]}
           asChild
         >
-          <TouchableOpacity>
+          <AnimatedTouchableOpacity entering={FadeInLeft.delay(100)}>
             <Text style={[styles.btnText, { color: "#fff" }]}>Play</Text>
-          </TouchableOpacity>
+          </AnimatedTouchableOpacity>
         </Link>
         <SignedOut>
           <Link
@@ -54,27 +57,29 @@ export default function Index() {
             style={[styles.btn, { borderColor: textColor }]}
             asChild
           >
-            <TouchableOpacity>
+            <AnimatedTouchableOpacity entering={FadeInLeft.delay(200)}>
               <ThemedText style={styles.btnText}>Log in</ThemedText>
-            </TouchableOpacity>
+            </AnimatedTouchableOpacity>
           </Link>
         </SignedOut>
 
         <SignedIn>
-          <TouchableOpacity
+          <AnimatedTouchableOpacity
+          entering={FadeInLeft.delay(200)}
             style={[styles.btn, { borderColor: textColor }]}
             onPress={() => signOut()}
           >
             <ThemedText style={styles.btnText}>Sign out</ThemedText>
-          </TouchableOpacity>
+          </AnimatedTouchableOpacity>
         </SignedIn>
 
-        <TouchableOpacity
+        <AnimatedTouchableOpacity
+          entering={FadeInLeft.delay(300)}
           onPress={handlePresentSubscribeModalPress}
           style={[styles.btn, { borderColor: textColor }]}
         >
           <ThemedText style={styles.btnText}>Subscribe</ThemedText>
-        </TouchableOpacity>
+        </AnimatedTouchableOpacity>
       </View>
 
       {/* <View style={styles.footer}></View> */}

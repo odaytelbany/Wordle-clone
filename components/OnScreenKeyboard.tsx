@@ -1,4 +1,5 @@
 import {
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -8,6 +9,7 @@ import {
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+// import * as Haptics from "expo-haptics";
 
 type OnScreenKeyboardProps = {
   onKeyPressed: (key: string) => void;
@@ -32,7 +34,7 @@ const OnScreenKeyboard = ({
   grayLetters,
 }: OnScreenKeyboardProps) => {
   const { width } = useWindowDimensions();
-  const keyWidth = (width - 60) / keys[0].length;
+  const keyWidth = Platform.OS === "web" ? 58 : (width - 60) / keys[0].length;
   const keyHeight = 60;
 
   const isSpecialKey = (key: string) => [ENTER, BACKSPACE].includes(key);
@@ -45,21 +47,33 @@ const OnScreenKeyboard = ({
           {row.map((key, keyIndex) => (
             <Pressable
               key={`key - ${keyIndex}`}
-              onPress={() => onKeyPressed(key)}
-              style={({pressed}) => [
+              onPress={() => {
+                onKeyPressed(key);
+                // () => Haptics.impactAsync(Haptics?.ImpactFeedbackStyle?.Heavy);
+              }}
+              style={({ pressed }) => [
                 styles.key,
                 { width: keyWidth, height: keyHeight, backgroundColor: "#ddd" },
                 isSpecialKey(key) && { width: keyWidth * 1.5 },
                 {
-                  backgroundColor: greenLetters.includes(key) ? 
-                  Colors.light.green : yellowLetters.includes(key) ? 
-                  Colors.light.yellow : grayLetters.includes(key) ? 
-                  Colors.light.gray : '#ddd'
+                  backgroundColor: greenLetters.includes(key)
+                    ? Colors.light.green
+                    : yellowLetters.includes(key)
+                    ? Colors.light.yellow
+                    : grayLetters.includes(key)
+                    ? Colors.light.gray
+                    : "#ddd",
                 },
-                pressed && {backgroundColor: '#868686'},
+                pressed && { backgroundColor: "#868686" },
               ]}
             >
-              <Text style={[styles.keyText, key === 'ENTER' && {fontSize: 12}, isInLetters(key) && {color: '#fff'}]}>
+              <Text
+                style={[
+                  styles.keyText,
+                  key === "ENTER" && { fontSize: 12 },
+                  isInLetters(key) && { color: "#fff" },
+                ]}
+              >
                 {isSpecialKey(key) ? (
                   key === "ENTER" ? (
                     "ENTER"

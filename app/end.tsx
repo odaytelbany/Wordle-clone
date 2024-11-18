@@ -1,11 +1,13 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import Icon from "@/assets/images/wordle-icon.svg";
-import { SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { SignedIn, SignedOut, useUser } from "@clerk/clerk-expo";
 import * as MaliComposer from "expo-mail-composer";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { FIRESTORE_DB } from "@/utils/firebaseConfig";
 
 const Page = () => {
   const { win, word, gameField } = useLocalSearchParams<{
@@ -15,27 +17,58 @@ const Page = () => {
   }>();
 
   const router = useRouter();
-  const [userScore, setUserScore] = useState<any>({
-    played: 42,
-    wins: 32,
-    currentStreak: 2,
-  });
+  const [userScore, setUserScore] = useState<any>(null);
+  const { user } = useUser();
+
+  useEffect(() => {
+    updateHighscore();
+  }, [user]);
+
+  const updateHighscore = async () => {
+    if (!user) return;
+
+    const docRef = doc(FIRESTORE_DB, `highscore/${user.id}`);
+    const userScore = await getDoc(docRef);
+
+    let newScore = {
+      played: 1,
+      wins: win === "true" ? 1 : 0,
+      lastGame: win === "true" ? "win" : "loss",
+      currentStreak: win === "true" ? 1 : 0,
+    };
+
+    if (userScore.exists()) {
+      const data = userScore.data();
+
+      newScore = {
+        played: data.played + 1,
+        wins: win === "true" ? data.wins + 1 : data.wins,
+        lastGame: win === "true" ? "win" : "loss",
+        currentStreak:
+          (win === "true" && data.lastGame === "win")
+            ? data.currentStreak + 1
+            : win === 'true' ? 1 : 0,
+      };
+    }
+    await setDoc(docRef, newScore);
+    setUserScore(newScore);
+  };
 
   const shareGame = () => {
     const game = JSON.parse(gameField!);
     const imageText: string[][] = [];
 
-    const wordLetters = word.split('');
+    const wordLetters = word.split("");
 
     game.forEach((row: [], rowIndex: number) => {
       imageText.push([]);
       row.forEach((letter, index) => {
         if (letter === wordLetters[index]) {
-          imageText[rowIndex].push('🟩');
+          imageText[rowIndex].push("🟩");
         } else if (wordLetters.includes(letter)) {
-          imageText[rowIndex].push('🟨');
+          imageText[rowIndex].push("🟨");
         } else {
-          imageText[rowIndex].push('⬜');
+          imageText[rowIndex].push("⬜");
         }
       });
     });
@@ -69,9 +102,9 @@ const Page = () => {
                (row) =>
                  `<div class="row">${row
                    .map((cell) => `<div class="cell">${cell}</div>`)
-                   .join('')}</div>`
+                   .join("")}</div>`
              )
-             .join('')}
+             .join("")}
           </div>
         </body>
       </html>
@@ -118,22 +151,24 @@ const Page = () => {
 
         <SignedIn>
           <Text style={styles.text}>Statistics</Text>
-          <View style={styles.stats}>
-            <View>
-              <Text style={styles.score}>{userScore.played}</Text>
-              <Text>Played</Text>
-            </View>
+          {userScore && (
+            <View style={styles.stats}>
+              <View>
+                <Text style={styles.score}>{userScore?.played}</Text>
+                <Text>Played</Text>
+              </View>
 
-            <View>
-              <Text style={styles.score}>{userScore.wins}</Text>
-              <Text>Wins</Text>
-            </View>
+              <View>
+                <Text style={styles.score}>{userScore?.wins}</Text>
+                <Text>Wins</Text>
+              </View>
 
-            <View>
-              <Text style={styles.score}>{userScore.currentStreak}</Text>
-              <Text>Current Streak</Text>
+              <View>
+                <Text style={styles.score}>{userScore?.currentStreak}</Text>
+                <Text>Current Streak</Text>
+              </View>
             </View>
-          </View>
+          )}
         </SignedIn>
 
         <View

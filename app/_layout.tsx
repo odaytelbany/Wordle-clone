@@ -12,7 +12,7 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Text, useColorScheme } from "react-native";
+import { Appearance, Platform, Text, useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   BottomSheetModalProvider,
@@ -23,6 +23,8 @@ import { tokenCache } from "@/utils/cashe";
 import Logo from "../assets/images/nyt-logo.svg";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
+import { useMMKVBoolean } from "react-native-mmkv";
+import { storage } from "@/components/Storage";
 
 // Load the fonts first before hiding the splash screen
 SplashScreen.preventAutoHideAsync();
@@ -37,7 +39,17 @@ if (!publishableKey) {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const backgroundColor = Colors[colorScheme ?? "light"].gameBg;
+  const textColor = Colors[colorScheme ?? "light"].text;
+  const grayColor = Colors[colorScheme ?? "light"].gray;
   const router = useRouter();
+  const [dark] = useMMKVBoolean('dark-mode', storage);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web'){
+      Appearance.setColorScheme(dark ? 'dark' : 'light');
+    }
+  }, [dark])
 
   let [fontsLoaded] = useFonts({
     FrankRuhlLibre_800ExtraBold,
@@ -95,6 +107,7 @@ export default function RootLayout() {
                         style={{
                           fontSize: 26,
                           fontFamily: "FrankRuhlLibre_800ExtraBold",
+                          color: textColor
                         }}
                       >
                         Wordle

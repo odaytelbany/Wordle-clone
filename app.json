@@ -3,6 +3,7 @@
     "name": "wordle-clone",
     "slug": "wordle-clone",
     "version": "1.0.0",
+    "newArchEnabled": true,
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -34,6 +35,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2c9f6fa9-5975-47b4-8c18-1c1164340046"
+      }
+    },
+    "owner": "odaytelbany"
   }
 }
